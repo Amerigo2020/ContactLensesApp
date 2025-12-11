@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../../services/firebase_service.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,7 +15,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
   bool _obscurePassword = true;
 
   @override
@@ -26,13 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    final authProvider = context.read<AuthProvider>();
 
     try {
-      final firebaseService = FirebaseService();
-      await firebaseService.signInWithEmail(
+      await authProvider.signInWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
       );
@@ -40,15 +38,29 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/dashboard');
       }
-    } on FirebaseAuthException catch (e) {
-      _showError(e.message ?? 'An error occurred during sign in');
     } catch (e) {
-      _showError('An unexpected error occurred');
-    } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        _showError('Invalid email or password');
+      }
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final authProvider = context.read<AuthProvider>();
+
+    try {
+      await authProvider.signInWithGoogle();
+
+      if (mounted) {
+        // Check if user has completed onboarding
+        final hasOnboarding = authProvider.userProfile?.diopterLeft != null;
+        Navigator.of(context).pushReplacementNamed(
+          hasOnboarding ? '/dashboard' : '/onboarding',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError('Google Sign-In failed');
       }
     }
   }
@@ -58,12 +70,15 @@ class _LoginScreenState extends State<LoginScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -74,12 +89,16 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 60),
-                const Icon(
+                
+                // App Icon
+                Icon(
                   Icons.visibility,
                   size: 80,
-                  color: Color(0xFF2196F3),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 16),
+                
+                // Welcome Text
                 const Text(
                   'Welcome Back',
                   style: TextStyle(
@@ -98,6 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
+                
+                // Email Field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -106,17 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Enter your email',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                  validator: Validators.email,
                 ),
                 const SizedBox(height: 16),
+                
+                // Password Field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -137,36 +152,76 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
+                  validator: Validators.password,
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signIn,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text('Sign In'),
+                
+                // Forgot Password
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/forgot-password');
+                    },
+                    child: const Text('Forgot Password?'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                
+                // Sign In Button
+                CustomButton(
+                  text: 'Sign In',
+                  onPressed: _signIn,
+                  isLoading: authProvider.isLoading,
                 ),
                 const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/signup');
-                  },
-                  child: const Text('Don\'t have an account? Sign Up'),
+                
+                // Divider
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'OR',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Google Sign-In Button
+                OutlinedButton.icon(
+                  onPressed: authProvider.isLoading ? null : _signInWithGoogle,
+                  icon: Image.asset(
+                    'assets/icons/google_icon.png',
+                    height: 20,
+                    errorBuilder: (context, error, stackTrace) => 
+                        const Icon(Icons.login, size: 20),
+                  ),
+                  label: const Text('Continue with Google'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                
+                // Sign Up Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Don\'t have an account? '),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/signup');
+                      },
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
                 ),
               ],
             ),

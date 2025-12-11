@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import '../../../services/firebase_service.dart';
-import '../../../services/notification_service.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../utils/validators.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -16,9 +16,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -36,76 +36,46 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    if (!_acceptedTerms) {
+      _showError('Please accept the Terms and Privacy Policy');
+      return;
+    }
+
+    final authProvider = context.read<AuthProvider>();
 
     try {
-      final firebaseService = FirebaseService();
-      final userCredential = await firebaseService.signUpWithEmail(
+      await authProvider.signUpWithEmail(
         _emailController.text.trim(),
         _passwordController.text,
       );
 
-      final user = userCredential.user!;
-      final fcmToken = await NotificationService.localNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.getActiveNotifications();
-
-      // Create user document in Firestore
-      final appUser = User(
-        uid: user.uid,
-        email: user.email!,
-      );
-
-      await firebaseService.createUserDocument(appUser, '');
-
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/onboarding');
       }
-    } on FirebaseAuthException catch (e) {
-      _showError(e.message ?? 'An error occurred during sign up');
     } catch (e) {
-      _showError('An unexpected error occurred');
-    } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        _showError('Sign up failed. Please try again.');
       }
     }
   }
 
   Future<void> _signUpWithGoogle() async {
-    setState(() {
-      _isLoading = true;
-    });
+    if (!_acceptedTerms) {
+      _showError('Please accept the Terms and Privacy Policy');
+      return;
+    }
+
+    final authProvider = context.read<AuthProvider>();
 
     try {
-      final firebaseService = FirebaseService();
-      final userCredential = await firebaseService.signInWithGoogle();
-
-      final user = userCredential.user!;
-      final appUser = User(
-        uid: user.uid,
-        email: user.email!,
-      );
-
-      await firebaseService.createUserDocument(appUser, '');
+      await authProvider.signInWithGoogle();
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/onboarding');
       }
-    } on FirebaseAuthException catch (e) {
-      _showError(e.message ?? 'An error occurred during Google sign in');
     } catch (e) {
-      _showError('An unexpected error occurred');
-    } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        _showError('Google Sign-In failed');
       }
     }
   }
@@ -115,17 +85,66 @@ class _SignupScreenState extends State<SignupScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Widget _buildPasswordStrengthIndicator() {
+    final password = _passwordController.text;
+    if (password.isEmpty) return const SizedBox.shrink();
+
+    final strength = checkPasswordStrength(password);
+    String text;
+    Color color;
+
+    switch (strength) {
+      case PasswordStrength.weak:
+        text = 'Weak';
+        color = Colors.red;
+        break;
+      case PasswordStrength.medium:
+        text = 'Medium';
+        color = Colors.orange;
+        break;
+      case PasswordStrength.strong:
+        text = 'Strong';
+        color = Colors.green;
+        break;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: LinearProgressIndicator(
+              value: strength == PasswordStrength.weak
+                  ? 0.33
+                  : strength == PasswordStrength.medium
+                      ? 0.66
+                      : 1.0,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(color: color, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Account'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -135,11 +154,10 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
-                const Icon(
+                Icon(
                   Icons.person_add,
                   size: 80,
-                  color: Color(0xFF2196F3),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -151,28 +169,43 @@ class _SignupScreenState extends State<SignupScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton.icon(
-                  onPressed: _isLoading ? null : _signUpWithGoogle,
-                  icon: const Icon(Icons.login),
+                
+                // Google Sign-Up
+                OutlinedButton.icon(
+                  onPressed: authProvider.isLoading ? null : _signUpWithGoogle,
+                  icon: Image.asset(
+                    'assets/icons/google_icon.png',
+                    height: 20,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.login, size: 20),
+                  ),
                   label: const Text('Continue with Google'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    side: BorderSide(color: Colors.grey[300]!),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Row(
+                
+                // Divider
+                Row(
                   children: [
-                    Expanded(child: Divider()),
+                    const Expanded(child: Divider()),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('OR'),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'OR',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     ),
-                    Expanded(child: Divider()),
+                    const Expanded(child: Divider()),
                   ],
                 ),
                 const SizedBox(height: 16),
+                
+                // Email
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -181,20 +214,15 @@ class _SignupScreenState extends State<SignupScreen> {
                     hintText: 'Enter your email',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                  validator: Validators.email,
                 ),
                 const SizedBox(height: 16),
+                
+                // Password
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
+                  onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Create a password',
@@ -212,17 +240,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       },
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
+                  validator: Validators.password,
                 ),
+                _buildPasswordStrengthIndicator(),
                 const SizedBox(height: 16),
+                
+                // Confirm Password
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
@@ -247,29 +270,81 @@ class _SignupScreenState extends State<SignupScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please confirm your password';
                     }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signUp,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                
+                // Terms Checkbox
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _acceptedTerms,
+                      onChanged: (value) {
+                        setState(() {
+                          _acceptedTerms = value ?? false;
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                              fontSize: 14,
+                            ),
+                            children: const [
+                              TextSpan(text: 'I agree to the '),
+                              TextSpan(
+                                text: 'Terms of Service',
+                                style: TextStyle(
+                                  color: Color(0xFF2196F3),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              TextSpan(text: ' and '),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: TextStyle(
+                                  color: Color(0xFF2196F3),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
                           ),
-                        )
-                      : const Text('Create Account'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                
+                // Sign Up Button
+                CustomButton(
+                  text: 'Create Account',
+                  onPressed: _signUp,
+                  isLoading: authProvider.isLoading,
                 ),
                 const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Already have an account? Sign In'),
+                
+                // Sign In Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Already have an account? '),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Sign In'),
+                    ),
+                  ],
                 ),
               ],
             ),

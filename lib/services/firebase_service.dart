@@ -93,4 +93,42 @@ class FirebaseService {
     }
     return null;
   }
+
+  /// Complete account deletion workflow
+  /// Deletes both Firestore data and Firebase Auth account
+  /// Required for GDPR "right to be forgotten" compliance
+  Future<void> deleteAccount() async {
+    final user = currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in');
+    }
+
+    final uid = user.uid;
+
+    try {
+      // Step 1: Delete Firestore data
+      await _firestore.collection('users').doc(uid).delete();
+      print('User data deleted from Firestore: $uid');
+
+      // Step 2: Delete Firebase Auth account
+      await user.delete();
+      print('Firebase Auth account deleted: $uid');
+
+      // Step 3: Sign out from Google (if applicable)
+      await _googleSignIn.signOut();
+      
+      print('Account deletion completed successfully');
+    } catch (e) {
+      print('Error during account deletion: $e');
+      
+      // If user needs to re-authenticate (common error)
+      if (e.toString().contains('requires-recent-login')) {
+        throw Exception(
+          'For security reasons, please sign out and sign back in before deleting your account.'
+        );
+      }
+      
+      rethrow;
+    }
+  }
 }

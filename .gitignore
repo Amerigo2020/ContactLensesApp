@@ -33,9 +33,17 @@ migrate_working_dir/
 /build/
 
 # Firebase
-**/android/app/google-services.json
+# **/android/app/google-services.json (needed for build)
 **/ios/Runner/GoogleService-Info.plist
-**/firebase_options.dart
+# **/firebase_options.dart (needed for build)
+
+# App Signing & Keystores (NEVER COMMIT!)
+**/android/key.properties
+**/android/app/upload-keystore.jks
+**/android/app/*.jks
+**/android/app/*.keystore
+*.jks
+*.keystore
 
 # Web related
 lib/generated_plugin_registrant.dart
