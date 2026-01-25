@@ -35,7 +35,7 @@ void main() async {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-  
+
   // Pass all uncaught async errors to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
@@ -101,7 +101,7 @@ class LensGuardApp extends StatelessWidget {
               vertical: 16,
             ),
           ),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -114,7 +114,8 @@ class LensGuardApp extends StatelessWidget {
           '/signup': (context) => const SignupScreen(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
           '/onboarding': (context) => const WelcomeScreen(),
-          '/onboarding/prescription': (context) => const PrescriptionSetupScreen(),
+          '/onboarding/prescription': (context) =>
+              const PrescriptionSetupScreen(),
           '/onboarding/reminders': (context) => const ReminderSetupScreen(),
           '/onboarding/lens-pair': (context) => const LensPairSetupScreen(),
           '/dashboard': (context) => const DashboardScreen(),
@@ -142,9 +143,9 @@ class AuthWrapper extends StatelessWidget {
     }
 
     // Check if user completed onboarding
-    final hasCompletedOnboarding = 
+    final hasCompletedOnboarding =
         authProvider.userProfile?.diopterLeft != null &&
-        authProvider.userProfile?.diopterRight != null;
+            authProvider.userProfile?.diopterRight != null;
 
     if (!hasCompletedOnboarding) {
       return const WelcomeScreen();

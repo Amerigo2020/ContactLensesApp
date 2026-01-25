@@ -52,8 +52,8 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Prescription updated successfully'),
+          const SnackBar(
+            content: Text('Prescription updated successfully'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -62,8 +62,8 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Failed to update prescription'),
+          const SnackBar(
+            content: Text('Failed to update prescription'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -89,7 +89,7 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
             children: [
               // Left Eye
               DropdownButtonFormField<String>(
-                value: _leftDiopter,
+                initialValue: _leftDiopter,
                 decoration: const InputDecoration(
                   labelText: 'Left Eye (OS)',
                   prefixIcon: Icon(Icons.remove_red_eye),
@@ -105,13 +105,14 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
                     _leftDiopter = value;
                   });
                 },
-                validator: (value) => Validators.dropdown(value, fieldName: 'left eye diopter'),
+                validator: (value) =>
+                    Validators.dropdown(value, fieldName: 'left eye diopter'),
               ),
               const SizedBox(height: 16),
-              
+
               // Right Eye
               DropdownButtonFormField<String>(
-                value: _rightDiopter,
+                initialValue: _rightDiopter,
                 decoration: const InputDecoration(
                   labelText: 'Right Eye (OD)',
                   prefixIcon: Icon(Icons.remove_red_eye),
@@ -127,13 +128,14 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
                     _rightDiopter = value;
                   });
                 },
-                validator: (value) => Validators.dropdown(value, fieldName: 'right eye diopter'),
+                validator: (value) =>
+                    Validators.dropdown(value, fieldName: 'right eye diopter'),
               ),
               const SizedBox(height: 16),
-              
+
               // Lens Brand
               DropdownButtonFormField<String>(
-                value: _lensBrand,
+                initialValue: _lensBrand,
                 decoration: const InputDecoration(
                   labelText: 'Lens Brand',
                   prefixIcon: Icon(Icons.shopping_bag),
@@ -149,13 +151,14 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
                     _lensBrand = value;
                   });
                 },
-                validator: (value) => Validators.dropdown(value, fieldName: 'lens brand'),
+                validator: (value) =>
+                    Validators.dropdown(value, fieldName: 'lens brand'),
               ),
               const SizedBox(height: 16),
-              
+
               // Lens Model
               DropdownButtonFormField<String>(
-                value: _lensModel,
+                initialValue: _lensModel,
                 decoration: const InputDecoration(
                   labelText: 'Lens Type',
                   prefixIcon: Icon(Icons.category),
@@ -171,10 +174,11 @@ class _EditPrescriptionScreenState extends State<EditPrescriptionScreen> {
                     _lensModel = value;
                   });
                 },
-                validator: (value) => Validators.dropdown(value, fieldName: 'lens type'),
+                validator: (value) =>
+                    Validators.dropdown(value, fieldName: 'lens type'),
               ),
               const SizedBox(height: 40),
-              
+
               CustomButton(
                 text: 'Save Changes',
                 onPressed: _save,

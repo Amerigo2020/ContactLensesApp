@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
@@ -15,8 +14,8 @@ class ReminderProvider with ChangeNotifier {
 
   bool _morningReminderEnabled = true;
   bool _eveningReminderEnabled = true;
-  TimeOfDay _morningTime = TimeOfDay(hour: 8, minute: 0);
-  TimeOfDay _eveningTime = TimeOfDay(hour: 22, minute: 0);
+  TimeOfDay _morningTime = const TimeOfDay(hour: 8, minute: 0);
+  TimeOfDay _eveningTime = const TimeOfDay(hour: 22, minute: 0);
   bool _isLoading = false;
   bool _hasPermission = false;
 
@@ -133,10 +132,7 @@ class ReminderProvider with ChangeNotifier {
         AppConfig.morningReminderId,
         'Time to insert your lenses',
         'Don\'t forget to put in your contact lenses!',
-        NotificationService.TimeOfDay(
-          hour: _morningTime.hour,
-          minute: _morningTime.minute,
-        ),
+        _morningTime,
       );
     } catch (e) {
       debugPrint('Error scheduling morning reminder: $e');
@@ -150,10 +146,7 @@ class ReminderProvider with ChangeNotifier {
         AppConfig.eveningReminderId,
         'Time to remove your lenses',
         'Remember to take out your contact lenses before bed!',
-        NotificationService.TimeOfDay(
-          hour: _eveningTime.hour,
-          minute: _eveningTime.minute,
-        ),
+        _eveningTime,
       );
     } catch (e) {
       debugPrint('Error scheduling evening reminder: $e');

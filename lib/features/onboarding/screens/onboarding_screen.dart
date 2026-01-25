@@ -34,7 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Icon(
-                Icons.eyeglass,
+                Icons.visibility,
                 size: 100,
                 color: Color(0xFF2196F3),
               ),
@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedLeftDiopter,
+                initialValue: _selectedLeftDiopter,
                 decoration: const InputDecoration(
                   hintText: 'Select your left eye diopter',
                   prefixIcon: Icon(Icons.visibility),
@@ -99,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedRightDiopter,
+                initialValue: _selectedRightDiopter,
                 decoration: const InputDecoration(
                   hintText: 'Select your right eye diopter',
                   prefixIcon: Icon(Icons.visibility),
@@ -132,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedBrand,
+                initialValue: _selectedBrand,
                 decoration: const InputDecoration(
                   hintText: 'Select your preferred brand',
                   prefixIcon: Icon(Icons.branding_watermark),
@@ -166,7 +166,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedModel,
+                initialValue: _selectedModel,
                 decoration: const InputDecoration(
                   hintText: 'Select your lens model',
                   prefixIcon: Icon(Icons.calendar_today),
@@ -198,7 +198,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Text('Complete Setup'),

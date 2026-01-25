@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firestore_service.dart';
 import '../models/user.dart';
 
 /// Provider for user profile data and lens tracking
 class UserProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
-  
+
   User? _currentUser;
   bool _isLoading = false;
   String? _error;
@@ -15,8 +14,8 @@ class UserProvider with ChangeNotifier {
   User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  bool get hasCompletedOnboarding => 
-      _currentUser?.diopterLeft != null && 
+  bool get hasCompletedOnboarding =>
+      _currentUser?.diopterLeft != null &&
       _currentUser?.diopterRight != null &&
       _currentUser?.preferredLensBrand != null;
 
@@ -116,7 +115,7 @@ class UserProvider with ChangeNotifier {
   /// Calculate days worn
   int getDaysWorn() {
     if (_currentUser == null) return 0;
-    
+
     // This will be populated from Firestore query
     final startDate = _getStartDate();
     if (startDate == null) return 0;
@@ -130,7 +129,7 @@ class UserProvider with ChangeNotifier {
     if (_currentUser?.preferredLensModel == null) return 30;
 
     final model = _currentUser!.preferredLensModel!.toLowerCase();
-    
+
     if (model.contains('daily') || model.contains('1-day')) {
       return 1;
     } else if (model.contains('14') || model.contains('2-week')) {
@@ -140,7 +139,7 @@ class UserProvider with ChangeNotifier {
     } else if (model.contains('weekly')) {
       return 7;
     }
-    
+
     return 30; // Default to monthly
   }
 

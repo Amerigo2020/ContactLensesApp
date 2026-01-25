@@ -40,8 +40,8 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
     if (!granted) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Notification permission is required for reminders'),
+          const SnackBar(
+            content: Text('Notification permission is required for reminders'),
             backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
           ),
@@ -81,9 +81,9 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
                 backgroundColor: Colors.grey[300],
               ),
               const SizedBox(height: 32),
-              
+
               const Text(
-               'Step 2 of 3',
+                'Step 2 of 3',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
@@ -109,7 +109,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              
+
               // Morning Reminder
               Card(
                 child: ListTile(
@@ -129,7 +129,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Evening Reminder
               Card(
                 child: ListTile(
@@ -149,7 +149,7 @@ class _ReminderSetupScreenState extends State<ReminderSetupScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              
+
               CustomButton(
                 text: 'Continue',
                 onPressed: _continue,

@@ -28,7 +28,8 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
                     child: Icon(
                       Icons.person,
                       size: 40,
@@ -47,10 +48,10 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Prescription Card
             CustomCard(
-              child:Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -72,9 +73,11 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                   const Divider(),
-                  _buildInfoRow('Left Eye (OS)', user?.diopterLeft ?? 'Not set'),
+                  _buildInfoRow(
+                      'Left Eye (OS)', user?.diopterLeft ?? 'Not set'),
                   const SizedBox(height: 8),
-                  _buildInfoRow('Right Eye (OD)', user?.diopterRight ?? 'Not set'),
+                  _buildInfoRow(
+                      'Right Eye (OD)', user?.diopterRight ?? 'Not set'),
                   const SizedBox(height: 8),
                   _buildInfoRow('Brand', user?.preferredLensBrand ?? 'Not set'),
                   const SizedBox(height: 8),
@@ -83,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Settings List
             const Text(
               'Settings',
@@ -124,16 +127,16 @@ class ProfileScreen extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    title: const Text('About'),
-                    trailing: const Text('v1.0.0'),
+                  const ListTile(
+                    leading: Icon(Icons.info_outline),
+                    title: Text('About'),
+                    trailing: Text('v1.0.0'),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Sign Out Button
             OutlinedButton.icon(
               onPressed: () async {
@@ -149,7 +152,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            
+
             // Delete Account Button
             TextButton.icon(
               onPressed: () => _showDeleteAccountDialog(context, authProvider),
@@ -187,7 +190,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _showDeleteAccountDialog(BuildContext context, AuthProvider authProvider) async {
+  Future<void> _showDeleteAccountDialog(
+      BuildContext context, AuthProvider authProvider) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -230,8 +234,8 @@ class ProfileScreen extends StatelessWidget {
         if (context.mounted) {
           Navigator.of(context).pushReplacementNamed('/login');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Account deleted successfully'),
+            const SnackBar(
+              content: Text('Account deleted successfully'),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
             ),

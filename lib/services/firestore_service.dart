@@ -48,10 +48,7 @@ class FirestoreService {
   }
 
   Future<void> updateUserFCMToken(String uid, String token) async {
-    await _firestore
-        .collection('users')
-        .doc(uid)
-        .update({'fcm_token': token});
+    await _firestore.collection('users').doc(uid).update({'fcm_token': token});
   }
 
   Future<void> updateUserLastNotifiedPrice(
@@ -77,7 +74,7 @@ class FirestoreService {
 
   Future<Duration> getCurrentLensWearDuration(String uid) async {
     final doc = await _firestore.collection('users').doc(uid).get();
-    final data = doc.data() as Map<String, dynamic>?;
+    final data = doc.data();
 
     if (data == null || data['current_pair_start_date'] == null) {
       return Duration.zero;
@@ -97,7 +94,8 @@ class FirestoreService {
     String brand,
     String model,
   ) async {
-    final docId = '${brand.toLowerCase()}_${model.toLowerCase().replaceAll(' ', '')}';
+    final docId =
+        '${brand.toLowerCase()}_${model.toLowerCase().replaceAll(' ', '')}';
     final doc = await _firestore.collection('price_catalog').doc(docId).get();
     if (doc.exists) {
       return LensPriceCatalog.fromDocument(doc);
@@ -141,7 +139,7 @@ class FirestoreService {
       // Delete any user-specific subcollections if they exist
       // (e.g., reminders, price_alerts, etc.)
       // Add additional cleanup as needed when more collections are added
-      
+
       // Note: This only deletes Firestore data
       // Firebase Auth account deletion is handled separately
       print('User data deleted successfully from Firestore: $uid');

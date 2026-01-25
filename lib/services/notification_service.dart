@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -7,8 +8,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  static final FlutterLocalNotificationsPlugin
-      _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   static FlutterLocalNotificationsPlugin get localNotificationsPlugin =>
       _localNotificationsPlugin;
@@ -67,8 +68,7 @@ class NotificationService {
   }
 
   static Future<bool> requestPermissions() async {
-    final AndroidFlutterLocalNotificationsPlugin?
-        androidImplementation =
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
         _localNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
 
@@ -79,8 +79,8 @@ class NotificationService {
     final bool? androidGranted =
         await androidImplementation?.requestNotificationsPermission();
 
-    final bool? iosGranted =
-        await iosImplementation?.requestPermissions(alert: true, badge: true, sound: true);
+    final bool? iosGranted = await iosImplementation?.requestPermissions(
+        alert: true, badge: true, sound: true);
 
     return (androidGranted ?? true) && (iosGranted ?? true);
   }
@@ -112,6 +112,7 @@ class NotificationService {
       _notificationDetails,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: 'reminder_$id',
     );
@@ -130,6 +131,7 @@ class NotificationService {
       _notificationDetails,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
       payload: 'lens_replacement_$id',
     );
   }
@@ -169,11 +171,4 @@ class NotificationService {
       payload: 'immediate_$id',
     );
   }
-}
-
-class TimeOfDay {
-  final int hour;
-  final int minute;
-
-  const TimeOfDay({required this.hour, required this.minute});
 }

@@ -29,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>();
-    final userName = userProvider.currentUser?.email?.split('@').first ?? 'User';
+    final userName = userProvider.currentUser?.email.split('@').first ?? 'User';
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +55,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: _selectedIndex == 0 ? _buildDashboard() : _buildProfilePlaceholder(),
+      body:
+          _selectedIndex == 0 ? _buildDashboard() : _buildProfilePlaceholder(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
@@ -107,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Main Feature: Wear Time Tracking
             const WearTimeCard(),
             const SizedBox(height: 16),
-            
+
             // Reminders Status
             CustomCard(
               child: Column(
@@ -184,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Price Tracking Status
             CustomCard(
               child: Column(

@@ -25,8 +25,8 @@ class RemindersScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: const [
+                    const Row(
+                      children: [
                         Icon(Icons.warning_amber, color: Colors.orange),
                         SizedBox(width: 12),
                         Text(

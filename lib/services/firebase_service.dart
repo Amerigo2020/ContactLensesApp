@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/lens_price_entry.dart';
@@ -9,32 +9,34 @@ class FirebaseService {
   factory FirebaseService() => _instance;
   FirebaseService._internal();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final fb_auth.FirebaseAuth _auth = fb_auth.FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  FirebaseAuth get auth => _auth;
+  fb_auth.FirebaseAuth get auth => _auth;
   FirebaseFirestore get firestore => _firestore;
   GoogleSignIn get googleSignIn => _googleSignIn;
 
-  User? get currentUser => _auth.currentUser;
+  fb_auth.User? get currentUser => _auth.currentUser;
 
   // Authentication Methods
-  Future<UserCredential> signUpWithEmail(String email, String password) async {
+  Future<fb_auth.UserCredential> signUpWithEmail(
+      String email, String password) async {
     return await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
 
-  Future<UserCredential> signInWithEmail(String email, String password) async {
+  Future<fb_auth.UserCredential> signInWithEmail(
+      String email, String password) async {
     return await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<fb_auth.UserCredential> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw Exception('Google sign-in aborted');
@@ -43,7 +45,7 @@ class FirebaseService {
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    final credential = GoogleAuthProvider.credential(
+    final credential = fb_auth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
@@ -85,8 +87,10 @@ class FirebaseService {
     return _firestore.collection('price_catalog').snapshots();
   }
 
-  Future<LensPriceCatalog?> getLensPriceCatalog(String brand, String model) async {
-    final docId = '${brand.toLowerCase()}_${model.toLowerCase().replaceAll(' ', '')}';
+  Future<LensPriceCatalog?> getLensPriceCatalog(
+      String brand, String model) async {
+    final docId =
+        '${brand.toLowerCase()}_${model.toLowerCase().replaceAll(' ', '')}';
     final doc = await _firestore.collection('price_catalog').doc(docId).get();
     if (doc.exists) {
       return LensPriceCatalog.fromDocument(doc);
@@ -116,18 +120,17 @@ class FirebaseService {
 
       // Step 3: Sign out from Google (if applicable)
       await _googleSignIn.signOut();
-      
+
       print('Account deletion completed successfully');
     } catch (e) {
       print('Error during account deletion: $e');
-      
+
       // If user needs to re-authenticate (common error)
       if (e.toString().contains('requires-recent-login')) {
         throw Exception(
-          'For security reasons, please sign out and sign back in before deleting your account.'
-        );
+            'For security reasons, please sign out and sign back in before deleting your account.');
       }
-      
+
       rethrow;
     }
   }

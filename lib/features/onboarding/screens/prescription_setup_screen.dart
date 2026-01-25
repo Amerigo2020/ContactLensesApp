@@ -10,7 +10,8 @@ class PrescriptionSetupScreen extends StatefulWidget {
   const PrescriptionSetupScreen({super.key});
 
   @override
-  State<PrescriptionSetupScreen> createState() => _PrescriptionSetupScreenState();
+  State<PrescriptionSetupScreen> createState() =>
+      _PrescriptionSetupScreenState();
 }
 
 class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
@@ -44,8 +45,8 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Failed to save prescription'),
+          const SnackBar(
+            content: Text('Failed to save prescription'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -76,7 +77,7 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                   backgroundColor: Colors.grey[300],
                 ),
                 const SizedBox(height: 32),
-                
+
                 const Text(
                   'Step 1 of 3',
                   style: TextStyle(
@@ -95,10 +96,10 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
-                
+
                 // Left Eye
                 DropdownButtonFormField<String>(
-                  value: _leftDiopter,
+                  initialValue: _leftDiopter,
                   decoration: const InputDecoration(
                     labelText: 'Left Eye (OS)',
                     prefixIcon: Icon(Icons.remove_red_eye),
@@ -114,13 +115,14 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                       _leftDiopter = value;
                     });
                   },
-                  validator: (value) => Validators.dropdown(value, fieldName: 'left eye diopter'),
+                  validator: (value) =>
+                      Validators.dropdown(value, fieldName: 'left eye diopter'),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Right Eye
                 DropdownButtonFormField<String>(
-                  value: _rightDiopter,
+                  initialValue: _rightDiopter,
                   decoration: const InputDecoration(
                     labelText: 'Right Eye (OD)',
                     prefixIcon: Icon(Icons.remove_red_eye),
@@ -136,13 +138,14 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                       _rightDiopter = value;
                     });
                   },
-                  validator: (value) => Validators.dropdown(value, fieldName: 'right eye diopter'),
+                  validator: (value) => Validators.dropdown(value,
+                      fieldName: 'right eye diopter'),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Lens Brand
                 DropdownButtonFormField<String>(
-                  value: _lensBrand,
+                  initialValue: _lensBrand,
                   decoration: const InputDecoration(
                     labelText: 'Lens Brand',
                     prefixIcon: Icon(Icons.shopping_bag),
@@ -158,13 +161,14 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                       _lensBrand = value;
                     });
                   },
-                  validator: (value) => Validators.dropdown(value, fieldName: 'lens brand'),
+                  validator: (value) =>
+                      Validators.dropdown(value, fieldName: 'lens brand'),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Lens Model
                 DropdownButtonFormField<String>(
-                  value: _lensModel,
+                  initialValue: _lensModel,
                   decoration: const InputDecoration(
                     labelText: 'Lens Type',
                     prefixIcon: Icon(Icons.category),
@@ -180,10 +184,11 @@ class _PrescriptionSetupScreenState extends State<PrescriptionSetupScreen> {
                       _lensModel = value;
                     });
                   },
-                  validator: (value) => Validators.dropdown(value, fieldName: 'lens type'),
+                  validator: (value) =>
+                      Validators.dropdown(value, fieldName: 'lens type'),
                 ),
                 const SizedBox(height: 40),
-                
+
                 CustomButton(
                   text: 'Continue',
                   onPressed: _continue,

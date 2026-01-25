@@ -32,8 +32,8 @@ class _LensPairSetupScreenState extends State<LensPairSetupScreen> {
   Future<void> _complete() async {
     if (_startDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select when you started your current pair'),
+        const SnackBar(
+          content: Text('Please select when you started your current pair'),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
         ),
@@ -58,8 +58,8 @@ class _LensPairSetupScreenState extends State<LensPairSetupScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Failed to save lens pair information'),
+          const SnackBar(
+            content: Text('Failed to save lens pair information'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -93,7 +93,7 @@ class _LensPairSetupScreenState extends State<LensPairSetupScreen> {
                 backgroundColor: Colors.grey[300],
               ),
               const SizedBox(height: 32),
-              
+
               const Text(
                 'Step 3 of 3',
                 style: TextStyle(
@@ -121,14 +121,14 @@ class _LensPairSetupScreenState extends State<LensPairSetupScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 60),
-              
+
               Icon(
                 Icons.calendar_month,
                 size: 100,
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
               const SizedBox(height: 40),
-              
+
               // Date Selector
               Card(
                 child: InkWell(
@@ -171,7 +171,7 @@ class _LensPairSetupScreenState extends State<LensPairSetupScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              
+
               CustomButton(
                 text: 'Complete Setup',
                 onPressed: _complete,

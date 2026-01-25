@@ -16,7 +16,7 @@ class _WearTrackingScreenState extends State<WearTrackingScreen> {
   final FirestoreService _firestoreService = FirestoreService();
   final User? _user = FirebaseAuth.instance.currentUser;
   int _currentWearDays = 0;
-  int _totalLensDays = 14;
+  final int _totalLensDays = 14;
   Timestamp? _startDate;
   bool _isLoading = false;
 
@@ -34,7 +34,7 @@ class _WearTrackingScreenState extends State<WearTrackingScreen> {
         .doc(_user!.uid)
         .get();
 
-    final data = doc.data() as Map<String, dynamic>?;
+    final data = doc.data();
 
     if (data != null && data['current_pair_start_date'] != null) {
       final startDate = data['current_pair_start_date'] as Timestamp;
@@ -159,10 +159,10 @@ class _WearTrackingScreenState extends State<WearTrackingScreen> {
                         ),
                       ),
                     ] else ...[
-                      Icon(
+                      const Icon(
                         Icons.visibility,
                         size: 80,
-                        color: const Color(0xFF2196F3),
+                        color: Color(0xFF2196F3),
                       ),
                       const SizedBox(height: 16),
                       const Text(
@@ -179,9 +179,7 @@ class _WearTrackingScreenState extends State<WearTrackingScreen> {
                       style: TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
-                        color: isExpired
-                            ? Colors.red
-                            : const Color(0xFF2196F3),
+                        color: isExpired ? Colors.red : const Color(0xFF2196F3),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -203,7 +201,8 @@ class _WearTrackingScreenState extends State<WearTrackingScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         color: isExpired ? Colors.red : Colors.grey[600],
-                        fontWeight: isExpired ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isExpired ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                     if (_startDate != null) ...[

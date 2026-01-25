@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/custom_card.dart';
 import '../../../widgets/empty_state.dart';
 
 class PriceTrackingScreen extends StatelessWidget {
@@ -14,7 +13,8 @@ class PriceTrackingScreen extends StatelessWidget {
       body: const EmptyState(
         icon: Icons.price_check,
         title: 'Price Tracking Coming Soon',
-        description: 'We\'re working on bringing you the best prices for your contact lenses. Stay tuned!',
+        description:
+            'We\'re working on bringing you the best prices for your contact lenses. Stay tuned!',
       ),
     );
   }

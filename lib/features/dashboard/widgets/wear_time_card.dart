@@ -33,7 +33,8 @@ class WearTimeCard extends StatelessWidget {
                     ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
@@ -50,7 +51,7 @@ class WearTimeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // Progress Circle
           SizedBox(
             height: 180,
@@ -66,7 +67,9 @@ class WearTimeCard extends StatelessWidget {
                     strokeWidth: 12,
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      progress >= 0.8 ? Colors.orange : Theme.of(context).colorScheme.primary,
+                      progress >= 0.8
+                          ? Colors.orange
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -93,7 +96,7 @@ class WearTimeCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Days Remaining
           if (daysRemaining > 0)
             Container(
@@ -101,7 +104,10 @@ class WearTimeCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: progress >= 0.8
                     ? Colors.orange.withOpacity(0.1)
-                    : Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                    : Theme.of(context)
+                        .colorScheme
+                        .primaryContainer
+                        .withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -110,7 +116,9 @@ class WearTimeCard extends StatelessWidget {
                   Icon(
                     progress >= 0.8 ? Icons.warning_amber : Icons.info_outline,
                     size: 20,
-                    color: progress >= 0.8 ? Colors.orange : Theme.of(context).colorScheme.primary,
+                    color: progress >= 0.8
+                        ? Colors.orange
+                        : Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -120,7 +128,9 @@ class WearTimeCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: progress >= 0.8 ? Colors.orange : Theme.of(context).colorScheme.primary,
+                      color: progress >= 0.8
+                          ? Colors.orange
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
@@ -133,9 +143,9 @@ class WearTimeCard extends StatelessWidget {
                 color: Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Icon(
                     Icons.error_outline,
                     size: 20,
@@ -154,7 +164,7 @@ class WearTimeCard extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 20),
-          
+
           // Start New Pair Button
           CustomButton(
             text: 'Start New Pair',
@@ -185,8 +195,8 @@ class WearTimeCard extends StatelessWidget {
                   await userProvider.startNewLensPair(uid);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('New lens pair started!'),
+                      const SnackBar(
+                        content: Text('New lens pair started!'),
                         backgroundColor: Colors.green,
                         behavior: SnackBarBehavior.floating,
                       ),
