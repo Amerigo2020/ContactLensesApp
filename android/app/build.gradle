@@ -31,16 +31,17 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.lensguard.app"
-    compileSdk 34
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -50,7 +51,7 @@ android {
     defaultConfig {
         applicationId "com.lensguard.app"
         minSdk 24
-        targetSdk 34
+        targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -96,8 +97,17 @@ dependencies {
     
     // MultiDex support for devices < API 21
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 
 // Apply Google Services plugin at the end
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+
+// Mapping upload fails without a real Firebase project; re-enable once google-services.json is real
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('uploadCrashlyticsMappingFile')) {
+        task.enabled = false
+    }
+}
