@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>LensGuard — Launch Video</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      body {
+        font-family: Roboto, "Segoe UI", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .scene-bg {
+        position: absolute;
+        inset: 0;
+      }
+      .scene-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .gradient-bg {
+        background: linear-gradient(180deg, #2196f3 0%, #1976d2 100%);
+      }
+      .light-bg {
+        background: #f5f9ff;
+      }
+
+      /* Scene 1 — problem statement */
+      #s1-line1 {
+        font-size: 84px;
+        font-weight: 800;
+        color: #1a2733;
+        max-width: 1400px;
+        text-align: center;
+        line-height: 1.15;
+      }
+      #s1-line2 {
+        font-size: 132px;
+        font-weight: 900;
+        color: #2196f3;
+        margin-top: 48px;
+      }
+
+      /* Scene 2 / 6 — brand */
+      .brand-icon {
+        width: 180px;
+        height: 180px;
+      }
+      .brand-title {
+        font-size: 128px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 1.2px;
+        margin-top: 32px;
+      }
+      .brand-sub {
+        font-size: 42px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.78);
+        margin-top: 20px;
+      }
+      #s6-cta {
+        font-size: 52px;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 72px;
+      }
+
+      /* Wear-time card (scenes 3 + 5), recreated from wear_time_card.dart */
+      .feature-row {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 130px;
+      }
+      .wear-card {
+        width: 640px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 24px 80px rgba(25, 118, 210, 0.18);
+        padding: 44px 48px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .card-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .card-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: #1a2733;
+      }
+      .card-badge {
+        background: #e3f2fd;
+        color: #2196f3;
+        font-size: 22px;
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 999px;
+      }
+      .ring-wrap {
+        position: relative;
+        width: 340px;
+        height: 340px;
+        margin-top: 40px;
+      }
+      .ring-wrap svg {
+        transform: rotate(-90deg);
+      }
+      .ring-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .ring-day {
+        font-size: 62px;
+        font-weight: 800;
+        color: #1a2733;
+      }
+      .ring-of {
+        font-size: 30px;
+        color: #7a8794;
+        margin-top: 6px;
+      }
+      .status-pill {
+        margin-top: 36px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 30px;
+        border-radius: 14px;
+        font-size: 26px;
+        font-weight: 500;
+      }
+      .pill-info {
+        background: #e3f2fd;
+        color: #2196f3;
+      }
+      .pill-alert {
+        background: #fdecea;
+        color: #e53935;
+        font-weight: 700;
+      }
+      .feature-label {
+        font-size: 66px;
+        font-weight: 800;
+        color: #1a2733;
+        max-width: 640px;
+        line-height: 1.2;
+      }
+      .feature-label .accent {
+        color: #2196f3;
+      }
+      .cta-button {
+        margin-top: 36px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #2196f3;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 700;
+        padding: 22px 44px;
+        border-radius: 14px;
+      }
+      #s5-snackbar {
+        position: absolute;
+        left: 50%;
+        bottom: 70px;
+        transform: translateX(-50%);
+        background: #43a047;
+        color: #fff;
+        font-size: 30px;
+        font-weight: 600;
+        padding: 22px 44px;
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+      }
+      #s5-cursor {
+        position: absolute;
+        width: 52px;
+        height: 52px;
+        /* parked over the CTA button; GSAP offsets it in from the right */
+        left: 985px;
+        top: 812px;
+      }
+
+      /* Scene 4 — notification */
+      #s4-banner {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        width: 940px;
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 24px 70px rgba(25, 118, 210, 0.2);
+        padding: 34px 42px;
+      }
+      #s4-banner .notif-icon {
+        flex: none;
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: #2196f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #s4-banner .notif-app {
+        font-size: 24px;
+        font-weight: 600;
+        color: #7a8794;
+      }
+      #s4-banner .notif-body {
+        font-size: 34px;
+        font-weight: 700;
+        color: #1a2733;
+        margin-top: 6px;
+      }
+      #s4-label {
+        font-size: 58px;
+        font-weight: 800;
+        color: #1a2733;
+        margin-top: 80px;
+        text-align: center;
+      }
+      #s4-label .accent {
+        color: #2196f3;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20.5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Scene 1 — The Problem : 0–3.5s -->
+      <section id="s1" class="clip" data-start="0" data-duration="3.5" data-track-index="1">
+        <div class="scene-bg light-bg"></div>
+        <div class="scene-content">
+          <div id="s1-line1">You forgot when you opened these lenses.</div>
+          <div id="s1-line2">Again.</div>
+        </div>
+      </section>
+
+      <!-- Scene 2 — Meet LensGuard : 3.5–6.5s -->
+      <section id="s2" class="clip" data-start="3.5" data-duration="3" data-track-index="2">
+        <div id="s2-bg" class="scene-bg gradient-bg"></div>
+        <div class="scene-content">
+          <svg id="s2-icon" class="brand-icon" viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+          </svg>
+          <div id="s2-title" class="brand-title">Meet LensGuard.</div>
+          <div id="s2-sub" class="brand-sub">Your Smart Contact Lens Assistant</div>
+        </div>
+      </section>
+
+      <!-- Scene 3 — Wear Tracking : 6.5–11s -->
+      <section id="s3" class="clip" data-start="6.5" data-duration="4.5" data-track-index="1">
+        <div class="scene-bg light-bg"></div>
+        <div class="feature-row">
+          <div id="s3-card" class="wear-card">
+            <div class="card-header">
+              <div class="card-title">Current Lens Pair</div>
+              <div class="card-badge">14-Day</div>
+            </div>
+            <div class="ring-wrap">
+              <svg width="340" height="340" viewBox="0 0 340 340">
+                <circle cx="170" cy="170" r="148" fill="none" stroke="#e8edf2" stroke-width="24" />
+                <circle
+                  id="s3-ring"
+                  cx="170"
+                  cy="170"
+                  r="148"
+                  fill="none"
+                  stroke="#2196f3"
+                  stroke-width="24"
+                  stroke-linecap="round"
+                  stroke-dasharray="929.9"
+                  style="stroke-dashoffset: 929.9"
+                />
+              </svg>
+              <div class="ring-center">
+                <div id="s3-day" class="ring-day">Day 1</div>
+                <div class="ring-of">of 14</div>
+              </div>
+            </div>
+            <div id="s3-pill" class="status-pill pill-info">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#2196f3">
+                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+              </svg>
+              10 days remaining
+            </div>
+          </div>
+          <div id="s3-label" class="feature-label">
+            Knows <span class="accent">exactly</span> how old your lenses are.
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 4 — Reminders : 11–14.5s -->
+      <section id="s4" class="clip" data-start="11" data-duration="3.5" data-track-index="2">
+        <div class="scene-bg light-bg"></div>
+        <div class="scene-content">
+          <div id="s4-banner">
+            <div class="notif-icon">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="#ffffff">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+              </svg>
+            </div>
+            <div>
+              <div class="notif-app">LensGuard · now</div>
+              <div class="notif-body">Time to take your lenses out 👁️</div>
+            </div>
+          </div>
+          <div id="s4-label">
+            Daily reminders. <span class="accent">Morning in. Evening out.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 5 — Start New Pair : 14.5–18s -->
+      <section id="s5" class="clip" data-start="14.5" data-duration="3.5" data-track-index="1">
+        <div class="scene-bg light-bg"></div>
+        <div class="feature-row">
+          <div id="s5-card" class="wear-card">
+            <div class="card-header">
+              <div class="card-title">Current Lens Pair</div>
+              <div class="card-badge">14-Day</div>
+            </div>
+            <div class="ring-wrap">
+              <svg width="340" height="340" viewBox="0 0 340 340">
+                <circle cx="170" cy="170" r="148" fill="none" stroke="#e8edf2" stroke-width="24" />
+                <circle
+                  id="s5-ring"
+                  cx="170"
+                  cy="170"
+                  r="148"
+                  fill="none"
+                  stroke="#ff9800"
+                  stroke-width="24"
+                  stroke-linecap="round"
+                  stroke-dasharray="929.9"
+                  style="stroke-dashoffset: 0"
+                />
+              </svg>
+              <div class="ring-center">
+                <div id="s5-day" class="ring-day">Day 14</div>
+                <div class="ring-of">of 14</div>
+              </div>
+            </div>
+            <div id="s5-pill" class="status-pill pill-alert">Time to replace your lenses!</div>
+            <div id="s5-btn" class="cta-button">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="#ffffff">
+                <path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+              </svg>
+              Start New Pair
+            </div>
+          </div>
+          <div id="s5-label" class="feature-label">
+            One tap. <span class="accent">Fresh pair.</span>
+          </div>
+        </div>
+        <div id="s5-snackbar">New lens pair started!</div>
+        <svg id="s5-cursor" viewBox="0 0 24 24">
+          <path d="M4 2l16 11.5-6.9 1L16 21l-3.2 1.4-2.9-6.4L4 20z" fill="#1a2733" stroke="#fff" stroke-width="1.4" />
+        </svg>
+      </section>
+
+      <!-- Scene 6 — Outro : 18–20.5s (recreated splash screen from main.dart) -->
+      <section id="s6" class="clip" data-start="18" data-duration="2.5" data-track-index="2">
+        <div class="scene-bg gradient-bg"></div>
+        <div class="scene-content">
+          <svg id="s6-icon" class="brand-icon" viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+          </svg>
+          <div id="s6-title" class="brand-title">LensGuard</div>
+          <div id="s6-sub" class="brand-sub">Your Smart Contact Lens Assistant</div>
+          <div id="s6-cta">Available now.</div>
+        </div>
+      </section>
+
+      <!-- Audio: music bed on track 10, SFX on 11+ -->
+      <audio
+        id="bg-music"
+        src="assets/music/happy-beats-business-moves-vol-11-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="20.5"
+        data-track-index="10"
+        data-volume="0.35"
+      ></audio>
+      <audio id="sfx-again" src="assets/sfx/interface/drop_001.ogg" data-start="2.1" data-duration="0.11" data-track-index="11" data-volume="0.7"></audio>
+      <!-- beat-locked: 3.70s strong cue — "Meet LensGuard." lands -->
+      <audio id="sfx-title" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="3.62" data-duration="0.18" data-track-index="12" data-volume="0.7"></audio>
+      <audio id="sfx-pill" src="assets/sfx/interface/drop_002.ogg" data-start="8.9" data-duration="0.19" data-track-index="13" data-volume="0.7"></audio>
+      <audio id="sfx-banner" src="assets/sfx/impact/impactPlate_light_001.ogg" data-start="11.55" data-duration="0.65" data-track-index="14" data-volume="0.7"></audio>
+      <audio id="sfx-click" src="assets/sfx/ui/mouseclick1.ogg" data-start="15.78" data-duration="0.06" data-track-index="15" data-volume="0.75"></audio>
+      <audio id="sfx-snackbar" src="assets/sfx/impact/impactGlass_light_001.ogg" data-start="16.8" data-duration="0.21" data-track-index="16" data-volume="0.7"></audio>
+      <audio id="sfx-logo" src="assets/sfx/impact/impactBell_heavy_000.ogg" data-start="18.2" data-duration="1.48" data-track-index="17" data-volume="0.75"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      const RING_C = 929.9; // 2π·148
+      const dayOffset = (d) => RING_C * (1 - d / 14);
+
+      // ---- Scene 1 — The Problem (0–3.5) ----
+      tl.from("#s1-line1", { y: 60, opacity: 0, duration: 0.55, ease: "power3.out" }, 0.25);
+      // beat: 2.12s — "Again." pops (sfx-again)
+      tl.from("#s1-line2", { scale: 0.4, opacity: 0, duration: 0.45, ease: "back.out(2)" }, 2.12);
+
+      // ---- Scene 2 — Meet LensGuard (3.5–6.5) ----
+      tl.from("#s2-icon", { scale: 0, opacity: 0, duration: 0.5, ease: "back.out(1.6)" }, 3.5);
+      // beat-locked: 3.70s strong cue — title lands
+      tl.from("#s2-title", { y: 70, opacity: 0, duration: 0.5, ease: "power3.out" }, 3.7);
+      tl.from("#s2-sub", { y: 30, opacity: 0, duration: 0.45, ease: "power2.out" }, 4.4);
+
+      // ---- Scene 3 — Wear Tracking (6.5–11) ----
+      tl.from("#s3-card", { x: -120, opacity: 0, duration: 0.55, ease: "power3.out" }, 6.6);
+      tl.from("#s3-label", { x: 80, opacity: 0, duration: 0.55, ease: "power3.out" }, 6.85);
+      // beat-grid: ring sweep + day counter tick from 7.38s over 3 beats (7.38 → 8.97)
+      tl.to("#s3-ring", { strokeDashoffset: dayOffset(4), duration: 1.59, ease: "none" }, 7.38);
+      const s3Count = { val: 1 };
+      tl.to(
+        s3Count,
+        {
+          val: 4,
+          duration: 1.59,
+          ease: "none",
+          snap: { val: 1 },
+          onUpdate: () => {
+            document.getElementById("s3-day").textContent = "Day " + Math.round(s3Count.val);
+          },
+        },
+        7.38
+      );
+      // beat: 8.96s — days-remaining pill pops (sfx-pill)
+      tl.from("#s3-pill", { y: 24, opacity: 0, duration: 0.4, ease: "back.out(1.7)" }, 8.96);
+
+      // ---- Scene 4 — Reminders (11–14.5) ----
+      // beat: 11.60s — notification banner drops in (sfx-banner)
+      tl.from("#s4-banner", { y: -260, opacity: 0, duration: 0.55, ease: "power3.out" }, 11.15);
+      // beat-locked: 12.65s strong cue — supporting line lands
+      tl.from("#s4-label", { y: 40, opacity: 0, duration: 0.5, ease: "power2.out" }, 12.65);
+
+      // ---- Scene 5 — Start New Pair (14.5–18) ----
+      tl.from("#s5-card", { x: -120, opacity: 0, duration: 0.55, ease: "power3.out" }, 14.6);
+      tl.from("#s5-label", { x: 80, opacity: 0, duration: 0.55, ease: "power3.out" }, 14.85);
+      // cursor rides in from the right and clicks the button (sfx-click at 15.78)
+      tl.from("#s5-cursor", { x: 620, y: 210, opacity: 0, duration: 0.8, ease: "power2.out" }, 15.0);
+      // beat: 15.81 — click
+      tl.to("#s5-btn", { scale: 0.93, duration: 0.09, yoyo: true, repeat: 1, ease: "power1.inOut" }, 15.78);
+      // reset: ring sweeps back to Day 1, orange → blue
+      tl.to("#s5-ring", { strokeDashoffset: dayOffset(1), stroke: "#2196f3", duration: 0.6, ease: "power2.inOut" }, 15.98);
+      const s5Count = { val: 14 };
+      tl.to(
+        s5Count,
+        {
+          val: 1,
+          duration: 0.6,
+          ease: "power2.inOut",
+          snap: { val: 1 },
+          onUpdate: () => {
+            document.getElementById("s5-day").textContent = "Day " + Math.round(s5Count.val);
+          },
+        },
+        15.98
+      );
+      tl.to("#s5-pill", { opacity: 0, y: -10, duration: 0.3, ease: "power2.in" }, 15.98);
+      // beat: 16.86 — success snackbar (sfx-snackbar)
+      tl.from("#s5-snackbar", { y: 90, opacity: 0, duration: 0.45, ease: "back.out(1.5)" }, 16.86);
+      tl.to("#s5-cursor", { opacity: 0, duration: 0.3 }, 16.5);
+
+      // ---- Scene 6 — Outro (18–20.5) ----
+      tl.from("#s6-icon", { scale: 0, opacity: 0, duration: 0.45, ease: "back.out(1.5)" }, 18.05);
+      // logo lands with the bell (sfx-logo)
+      tl.from("#s6-title", { y: 50, opacity: 0, duration: 0.45, ease: "power3.out" }, 18.3);
+      tl.from("#s6-sub", { opacity: 0, duration: 0.4, ease: "power2.out" }, 18.7);
+      tl.from("#s6-cta", { y: 30, opacity: 0, duration: 0.4, ease: "power2.out" }, 19.4);
+      // music fades out under the logo
+      tl.to("#bg-music", { volume: 0, duration: 1.4 }, 19.0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -2,6 +2,12 @@
 
 A smart assistant mobile app for contact lens wearers built with Flutter and Firebase.
 
+## 🎬 Launch Video
+
+> LensGuard is now live. Wear-time tracking that knows exactly how old your lenses are, daily insert/remove reminders, and one-tap fresh pairs — all in one place.
+
+▶️ **[Watch the launch video](brag-output/brag.mp4)** — a 20-second, startup-launch-from-2020-style intro to the app.
+
 ## Features
 
 ### 🏥 Health Reminders
