@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lensguard/providers/user_provider.dart';
 import 'package:lensguard/models/user.dart';
@@ -24,9 +26,14 @@ User _makeUser({
 }
 
 void main() {
+  // Initialize the binding and set up Firebase mocks before any tests run.
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setupFirebaseCoreMocks();
+
   late UserProvider provider;
 
-  setUp(() {
+  setUp(() async {
+    await Firebase.initializeApp();
     provider = UserProvider();
   });
 
