@@ -50,19 +50,18 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_API_KEY',
-    appId: 'YOUR_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
+    apiKey: 'AIzaSyCEr1pv1n4ZnN1qKO8JILYjeApr-bAyYPM',
+    appId: '1:293365424579:android:a66014ccf8fe2cc3ac1d76',
+    messagingSenderId: '293365424579',
+    projectId: 'lensguard-app-2026',
+    storageBucket: 'lensguard-app-2026.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_API_KEY',
-    appId: 'YOUR_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_STORAGE_BUCKET',
-    iosBundleId: 'com.yourcompany.lensguard',
+    apiKey: 'AIzaSyAToKwXADydsSWFsDQ88lO6OUdYRXNHJ90',
+    appId: '1:293365424579:ios:a41231707db6cdabac1d76',
+    messagingSenderId: '293365424579',
+    projectId: 'lensguard-app-2026',
+    storageBucket: 'lensguard-app-2026.firebasestorage.app',
+    iosBundleId: 'com.lensguard.app',
   );
 }

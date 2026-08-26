@@ -103,11 +103,5 @@ dependencies {
 
 // Apply Google Services plugin at the end
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
-
-// Mapping upload fails without a real Firebase project; re-enable once google-services.json is real
-tasks.whenTaskAdded { task ->
-    if (task.name.contains('uploadCrashlyticsMappingFile')) {
-        task.enabled = false
-    }
-}
