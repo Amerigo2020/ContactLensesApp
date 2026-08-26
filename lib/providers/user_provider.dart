@@ -7,6 +7,13 @@ class UserProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
 
   User? _currentUser;
+
+  /// Test-only setter for [_currentUser]. Do not use in production code.
+  @visibleForTesting
+  set currentUserForTest(User? user) {
+    _currentUser = user;
+  }
+
   bool _isLoading = false;
   String? _error;
 
